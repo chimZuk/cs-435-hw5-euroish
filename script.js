@@ -149,10 +149,7 @@ function processData(input) {
 
 class Euro_ishTrip {
     constructor(vertices, edges) {
-        this.explored = [];
-        this.pre_sorted = [];
         this.directions = [];
-
 
         this.cities = copy_array_1d(vertices);
         this.edges = copy_array_2d(edges);
@@ -172,52 +169,76 @@ class Euro_ishTrip {
         this.get_routes();
     }
 
-    topological_sort_helper(index, explored, pre_sorted) {
-        explored.push(index);
 
-        this.graph[index].forEach(function(node) {
-            if (explored.indexOf(node) == -1) {
-                this.topological_sort_helper(node, explored, pre_sorted);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    topological_sort_util(explored, indegree, route) {
+        var finished = false;
+
+        for (var i = 0; i < this.graph.length; i++) {
+            if (!explored[i] && indegree[i] == 0) {
+                explored[i] = true;
+                route.push(i);
+                for (var j = 0; j < this.graph[i].length; j++) {
+                    indegree[this.graph[i][j]]--;
+                }
+
+                this.topological_sort_util(explored, indegree, route);
+
+                explored[i] = false;
+                route.pop();
+                for (var j = 0; j < this.graph[i].length; j++) {
+                    indegree[this.graph[i][j]]++;
+                }
+
+                finished = true;
             }
-        }.bind(this));
+        }
 
-        pre_sorted.push(index);
+        if (!finished) {
+            var result = "";
+            route.forEach(function(element, i) {
+                result += String(this.cities[element]) + " ";
+            }.bind(this));
+
+            this.directions.push(route);
+            console.log(result);
+        }
+
     }
+
 
     topological_sort() {
-        this.graph.forEach(function(vertice, index) {
-            if (this.explored.indexOf(index) == -1) {
-                this.topological_sort_helper(index, this.explored, this.pre_sorted);
-            }
-        }.bind(this));
+        var explored = this.cities.map(x => false);
+        var indegree = this.cities.map(x => 0);
+        var pre_route = [];
 
-        var temp_direction = [];
-
-        while (this.pre_sorted.length != 0) {
-            temp_direction.push(this.cities[this.pre_sorted.splice(0, 1)[0]]);
-        }
-        this.directions.push(temp_direction);
-    }
-
-    output_routes() {
-        this.directions.forEach(function(route) {
-            var route_result = "";
-
-            route.forEach(function(city, index) {
-                if (index != 0) {
-                    route_result = city + ", " + route_result;
-                } else {
-                    route_result = city;
-                }
-            });
-
-            console.log(route_result);
+        this.graph.forEach(function(graph) {
+            graph.forEach(function(element) {
+                indegree[element]++;
+            })
         });
+
+        this.topological_sort_util(explored, indegree, pre_route);
     }
 
     get_routes() {
-        this.topological_sort()
-        this.output_routes();
+        this.topological_sort();
     }
 }
 
@@ -231,4 +252,4 @@ function copy_array_2d(arr1) {
     return arr1.map(x => x.slice()).slice();
 }
 
-processData(input6);
+processData(input0);
