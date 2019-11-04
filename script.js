@@ -120,13 +120,40 @@ function processData(input) {
     var edges_count = Number(data[vertices_count].split(" ")[1]);
     var edges_index = vertices_count + 1;
     var vertices = data.slice(1, vertices_count);
-    var edges = data.slice(edges_index, edges_index + edges_count)
-    console.log(data);
-    console.log(vertices_count);
-    console.log(edges_count);
-    console.log(edges_index);
-    console.log(vertices);
-    console.log(edges);
+    var edges = data.slice(edges_index, edges_index + edges_count).map(x => x.split(" ").map(y => Number(y)));
+
+    var trip = new Euro_ishTrip(vertices, edges);
+}
+
+
+class Euro_ishTrip {
+    constructor(vertices, edges) {
+        this.cities = copy_array_1d(vertices);
+        this.edges = copy_array_2d(edges);
+
+        this.graph = this.cities.map(function(element, i) {
+            element = [];
+
+            this.edges.forEach(function(edge) {
+                if (edge[0] == i) {
+                    element.push(edge[1]);
+                }
+            });
+
+            return element;
+        }.bind(this));
+
+        console.log(this.graph);
+    }
+
+}
+
+function copy_array_1d(arr1) {
+    return arr1.slice();
+}
+
+function copy_array_2d(arr1) {
+    return arr1.map(x => x.slice()).slice();
 }
 
 processData(input0);
