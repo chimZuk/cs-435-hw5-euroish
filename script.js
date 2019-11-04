@@ -150,6 +150,7 @@ function processData(input) {
 class Euro_ishTrip {
     constructor(vertices, edges) {
         this.directions = [];
+        this.directions_named = [];
 
         this.cities = copy_array_1d(vertices);
         this.edges = copy_array_2d(edges);
@@ -169,57 +170,32 @@ class Euro_ishTrip {
         this.get_routes();
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    topological_sort_util(explored, indegree, route) {
+    topological_sort_util(explored, indegree, route, directions) {
         var finished = false;
 
-        for (var i = 0; i < this.graph.length; i++) {
+        this.graph.forEach(function(node, i) {
             if (!explored[i] && indegree[i] == 0) {
                 explored[i] = true;
                 route.push(i);
-                for (var j = 0; j < this.graph[i].length; j++) {
-                    indegree[this.graph[i][j]]--;
-                }
+                node.forEach(function(edge) {
+                    indegree[edge]--;
+                });
 
-                this.topological_sort_util(explored, indegree, route);
+                this.topological_sort_util(explored, indegree, route, directions);
 
                 explored[i] = false;
                 route.pop();
-                for (var j = 0; j < this.graph[i].length; j++) {
-                    indegree[this.graph[i][j]]++;
-                }
+                node.forEach(function(edge) {
+                    indegree[edge]++;
+                });
 
                 finished = true;
             }
-        }
+        }.bind(this));
 
         if (!finished) {
-            var result = "";
-            route.forEach(function(element, i) {
-                result += String(this.cities[element]) + " ";
-            }.bind(this));
-
-            this.directions.push(route);
-            console.log(result);
+            directions.push(copy_array_1d(route));
         }
-
     }
 
 
@@ -234,11 +210,33 @@ class Euro_ishTrip {
             })
         });
 
-        this.topological_sort_util(explored, indegree, pre_route);
+        this.topological_sort_util(explored, indegree, pre_route, this.directions);
+    }
+
+    print_directions() {
+        this.directions.forEach(function(direction) {
+            var result_string = "";
+
+            direction.forEach(function(city, i) {
+                if (i != direction.length - 1) {
+                    result_string += this.cities[city] + ", ";
+                } else {
+                    result_string += this.cities[city];
+                }
+            }.bind(this));
+
+            this.directions_named.push(result_string);
+        }.bind(this));
+
+        this.directions_named.sort();
+        this.directions_named.forEach(function(direction) {
+            console.log(direction);
+        });
     }
 
     get_routes() {
         this.topological_sort();
+        this.print_directions();
     }
 }
 
@@ -252,4 +250,4 @@ function copy_array_2d(arr1) {
     return arr1.map(x => x.slice()).slice();
 }
 
-processData(input0);
+processData(input3);
