@@ -128,6 +128,11 @@ function processData(input) {
 
 class Euro_ishTrip {
     constructor(vertices, edges) {
+        this.explored = [];
+        this.pre_sorted = [];
+        this.directions = [];
+
+
         this.cities = copy_array_1d(vertices);
         this.edges = copy_array_2d(edges);
 
@@ -143,10 +148,59 @@ class Euro_ishTrip {
             return element;
         }.bind(this));
 
-        console.log(this.graph);
+        this.get_routes();
     }
 
+    topological_sort_helper(index, explored, pre_sorted) {
+        explored.push(index);
+
+        this.graph[index].forEach(function(node) {
+            if (explored.indexOf(node) == -1) {
+                this.topological_sort_helper(node, explored, pre_sorted);
+            }
+        }.bind(this));
+
+        pre_sorted.push(index);
+    }
+
+    topological_sort() {
+        this.graph.forEach(function(vertice, index) {
+            if (this.explored.indexOf(index) == -1) {
+                this.topological_sort_helper(index, this.explored, this.pre_sorted);
+            }
+        }.bind(this));
+
+        var temp_direction = [];
+
+        while (this.pre_sorted.length != 0) {
+            temp_direction.push(this.cities[this.pre_sorted.splice(0, 1)[0]]);
+        }
+        this.directions.push(temp_direction);
+    }
+
+    output_routes() {
+        this.directions.forEach(function(route) {
+            var route_result = "";
+
+            route.forEach(function(city, index) {
+                if (index != 0) {
+                    route_result = city + ", " + route_result;
+                } else {
+                    route_result = city;
+                }
+            });
+
+            console.log(route_result);
+        });
+    }
+
+    get_routes() {
+        this.topological_sort()
+        this.output_routes();
+    }
 }
+
+
 
 function copy_array_1d(arr1) {
     return arr1.slice();
