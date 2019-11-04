@@ -114,6 +114,27 @@ barcelona
 9 6
 9 5`;
 
+let input6 = `8
+minsk0
+brest1
+vitebsk2
+slutsk3
+gomel4
+la5
+ny6
+pa7
+8 8
+0 1
+1 2
+1 3
+1 5
+2 4
+3 4
+3 7
+5 6
+`;
+
+
 function processData(input) {
     var data = input.split("\n");
     var vertices_count = Number(data[0]) + 1;
@@ -210,4 +231,4 @@ function copy_array_2d(arr1) {
     return arr1.map(x => x.slice()).slice();
 }
 
-processData(input0);
+processData(input6);
